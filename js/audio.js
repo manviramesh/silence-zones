@@ -40,7 +40,7 @@ export async function startMicMonitoring(onReading, intervalMs = 400) {
     // to -10 dB (loud, safely below clipping). Rescaling to this range
     // instead of the full -100..0 dB span keeps a quiet room near 0
     // on the index instead of bunching everything into "moderate."
-    const MIN_DB = -65;
+    const MIN_DB = -55;
     const MAX_DB = -10;
     const dbfs = rms > 0 ? 20 * Math.log10(rms) : MIN_DB;
     const clamped = Math.max(MIN_DB, Math.min(MAX_DB, dbfs));
