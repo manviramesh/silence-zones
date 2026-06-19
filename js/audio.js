@@ -10,7 +10,14 @@ let stream = null;
 let intervalId = null;
 
 export async function startMicMonitoring(onReading, intervalMs = 400) {
-  stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  stream = await navigator.mediaDevices.getUserMedia({
+    audio: {
+      autoGainControl: false,   // stop the browser from auto-boosting quiet sound
+      echoCancellation: false,  // also alters signal levels, turn off for raw readings
+      noiseSuppression: false,  // same — we want the real ambient level, not a cleaned-up one
+    },
+  });
+
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   const source = audioCtx.createMediaStreamSource(stream);
   analyser = audioCtx.createAnalyser();
@@ -29,9 +36,17 @@ export async function startMicMonitoring(onReading, intervalMs = 400) {
     }
     const rms = Math.sqrt(sumSquares / buffer.length);
 
-    // rms is ~0 (silence) to ~1 (clipping). Shift into a friendlier 0-100 scale.
-    const dbfs = rms > 0 ? 20 * Math.log10(rms) : -100;
-    const loudnessIndex = Math.max(0, Math.min(100, dbfs + 100));
+    // Realistic mic range: -65 dB (near silence, mic self-noise floor)
+    // to -10 dB (loud, safely below clipping). Rescaling to this range
+    // instead of the full -100..0 dB span keeps a quiet room near 0
+    // on the index instead of bunching everything into "moderate."
+    const MIN_DB = -65;
+    const MAX_DB = -10;
+    const dbfs = rms > 0 ? 20 * Math.log10(rms) : MIN_DB;
+    const clamped = Math.max(MIN_DB, Math.min(MAX_DB, dbfs));
+    const loudnessIndex = ((clamped - MIN_DB) / (MAX_DB - MIN_DB)) * 100;
+
+    console.log('dbfs:', dbfs.toFixed(1), 'loudnessIndex:', Math.round(loudnessIndex));
 
     onReading(Math.round(loudnessIndex));
   }, intervalMs);
