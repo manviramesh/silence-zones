@@ -1,45 +1,69 @@
-# Silence Zones
+# 🔇 Silence Zones
 
-A crowd-measured loudness map: tap to measure, log a reading, watch it appear live on a community map, and get an AI-written summary of what's going on.
+**Map the noise around you.**
 
-## Stack
-Plain HTML/CSS/JS (no build step, hosts on GitHub Pages) + Supabase (Postgres + Realtime, free tier) + Claude API via a Supabase Edge Function.
+A crowd-measured loudness map built for campus life — find a quiet spot to study, and flag silence-zone violations near hospitals and schools, all from a browser tab.
 
-## 1. Set up Supabase
-1. Create a free project at supabase.com.
-2. Open SQL Editor and run all of `supabase/schema.sql`.
-3. Go to Project Settings → API, copy your **Project URL** and **anon public key**.
-4. Paste both into the placeholders in `js/supabase-client.js`.
+🔗 **Live demo:** https://manviramesh.github.io/silence-zones/
 
-## 2. Deploy the AI insight function
-Install the [Supabase CLI](https://supabase.com/docs/guides/cli) first, then:
+---
+
+## The problem
+
+India's CPCB Noise Pollution Rules legally cap noise within 100m of hospitals, schools, and courts at 50 dB by day and 40 dB by night — but these "silence zones" are routinely violated, and there's no easy way for ordinary people to flag it or even know it's happening. Meanwhile, students hunting for a quiet corner to study have no way to check before they walk there.
+
+Existing noise-mapping tools are either old academic side-projects or built for entire cities, not a campus. Nothing lets a regular person open a page, tap a button, and contribute a real reading in 10 seconds.
+
+## The idea
+
+Silence Zones turns any phone or laptop browser into a noise sensor:
+
+1. **Tap to measure** — uses the device microphone to read ambient loudness in real time (no app install).
+2. **Log a reading** — geotags it and drops a colored dot on a live community map.
+3. **Mark silence zones** — flag a spot as near a hospital/school so violations stand out in red.
+4. **Get an AI insight** — one tap summarizes recent readings in plain language, calling out violations against the legal CPCB limit.
+
+Every reading from every visitor appears on everyone else's map in real time.
+
+## Features
+
+- 🎙️ Live mic-based loudness meter (Web Audio API, with auto-gain/noise-suppression disabled for an unprocessed signal)
+- 🗺️ Real-time community map (Leaflet + OpenStreetMap)
+- 🚨 Automatic violation flagging for silence-zone readings
+- 🤖 AI-generated insights via the Claude API
+- 📱 Works on any phone browser — no install, no login
+
+## Tech stack
+
+| Layer | Tool |
+|---|---|
+| Frontend | Plain HTML / CSS / JS (no build step) |
+| Map | Leaflet.js + OpenStreetMap |
+| Database & realtime | Supabase (Postgres) |
+| AI insights | Claude API via Supabase Edge Function |
+| Hosting | GitHub Pages |
+
+## Important caveat
+
+Readings are a **relative Loudness Index (0–100)**, not a calibrated decibel/SPL measurement — phone and laptop mics vary too much in gain for that. Treat the map as a hotspot indicator, not lab-grade data. This mirrors how real crowdsourced-noise research projects frame phone-mic data: useful for spotting patterns official monitoring misses, not a replacement for calibrated sensors.
+
+## Run it locally
+
 ```bash
-supabase login
-supabase init
-supabase link --project-ref your-project-ref
-supabase secrets set ANTHROPIC_API_KEY=sk-ant-your-key-here
-supabase functions deploy get-insight
-```
-Get a key at console.anthropic.com — a hackathon's worth of Haiku calls costs a few cents.
-
-## 3. Run it locally
-Microphone access needs a secure context, so don't just double-click `index.html`. Run a local server:
-```bash
+git clone https://github.com/manviramesh/silence-zones.git
+cd silence-zones
 npx serve .
 ```
-Open the `localhost` URL it prints and allow microphone + location access.
+Open the printed `localhost` URL and allow microphone + location access. (Has to be served, not opened as a file directly — browsers block mic access otherwise.)
 
-## 4. Push to GitHub and turn on Pages
-```bash
-git init
-git add .
-git commit -m "Silence Zones MVP"
-git branch -M main
-git remote add origin https://github.com/your-username/silence-zones.git
-git push -u origin main
-```
-On GitHub: Settings → Pages → Source → branch `main` → Save. Live in a minute or two at `https://your-username.github.io/silence-zones/` (auto-https, so mic/location work fine).
+Full backend setup (Supabase + Edge Function) is in `SETUP.md`.
 
-## Notes for the pitch
-- Readings are a relative Loudness Index (0-100), not calibrated decibels — frame as "hotspots," not lab-grade measurement.
-- The open insert policy means anyone can write — fine for a demo, but call out rate limiting / anonymous auth as future work if a judge asks.
+## What's next
+
+- Anonymous rate-limiting so one person can't spam fake readings
+- Time-of-day overlays (day vs night legal limits)
+- Push alerts when a tracked location crosses into violation territory
+
+## Built by
+
+Manvi R
