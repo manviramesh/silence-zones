@@ -1,0 +1,263 @@
+/* Silence Zones — design tokens + layout. See README for setup. */
+
+:root {
+  --ink: #11161c;
+  --ink-soft: #4a5560;
+  --paper: #f2f5f2;
+  --paper-raised: #ffffff;
+  --mist: #d8e2de;
+  --quiet: #2d6b66;
+  --moderate: #e8c46a;
+  --loud: #e8954a;
+  --violation: #e15a4a;
+
+  --font-display: 'IBM Plex Sans Condensed', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+.site-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 56px 24px 24px;
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+.site-header h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(32px, 5vw, 48px);
+  margin: 12px 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.subhead {
+  color: var(--ink-soft);
+  font-size: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
+
+/* ---- Ripple meter (signature element) ---- */
+.meter-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 40px 0;
+}
+
+.ripple-meter {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid var(--quiet);
+  opacity: calc(0.15 + var(--level, 0) * 0.5);
+  transition: transform 0.4s ease, opacity 0.4s ease, border-color 0.4s ease;
+}
+
+.ring-1 { width: 140px; height: 140px; transform: scale(calc(1 + var(--level, 0) * 0.15)); }
+.ring-2 { width: 180px; height: 180px; transform: scale(calc(1 + var(--level, 0) * 0.25)); }
+.ring-3 { width: 220px; height: 220px; transform: scale(calc(1 + var(--level, 0) * 0.35)); }
+
+.ripple-meter[data-state="moderate"] .ring { border-color: var(--moderate); }
+.ripple-meter[data-state="loud"] .ring { border-color: var(--loud); }
+.ripple-meter[data-state="violation"] .ring { border-color: var(--violation); }
+
+.meter-core {
+  position: relative;
+  width: 116px;
+  height: 116px;
+  border-radius: 50%;
+  background: var(--paper-raised);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(17, 22, 28, 0.08);
+}
+
+.reading {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.reading-label {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring { transition: none; }
+}
+
+/* ---- Controls ---- */
+.meter-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--ink-soft); }
+
+.btn-secondary {
+  background: var(--paper-raised);
+  color: var(--ink);
+  border: 1.5px solid var(--mist);
+}
+
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--quiet);
+  outline-offset: 2px;
+}
+
+.checkbox-row, .select-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.select-row { justify-content: space-between; }
+.select-row select {
+  font-family: var(--font-body);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1.5px solid var(--mist);
+}
+
+.status {
+  font-size: 13px;
+  color: var(--quiet);
+  min-height: 18px;
+  margin: 0;
+}
+
+/* ---- Sections ---- */
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.section-heading h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  margin: 0;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  flex-wrap: wrap;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.dot-quiet { background: var(--quiet); }
+.dot-moderate { background: var(--moderate); }
+.dot-loud { background: var(--loud); }
+.dot-violation { background: var(--violation); }
+
+#map {
+  height: 380px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--mist);
+}
+
+.insight-section {
+  margin-top: 40px;
+  padding: 24px;
+  background: var(--paper-raised);
+  border-radius: var(--radius);
+  border: 1px solid var(--mist);
+}
+
+.insight-text {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+
+.site-footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .site-header { padding-top: 40px; }
+  .ripple-meter, .ring-3 { width: 180px; height: 180px; }
+  .ring-2 { width: 145px; height: 145px; }
+  .ring-1 { width: 112px; height: 112px; }
+}

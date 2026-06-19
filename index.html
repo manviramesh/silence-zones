@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Silence Zones — Campus Noise Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <span class="eyebrow">Silence Zones</span>
+    <h1>Map the noise around you.</h1>
+    <p class="subhead">A crowd-measured loudness map for campus — find quiet spots, flag silence-zone violations near hospitals and schools.</p>
+  </header>
+
+  <main>
+    <section class="meter-section" aria-label="Measure noise">
+      <div class="ripple-meter" id="rippleMeter" style="--level:0">
+        <div class="ring ring-3"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-1"></div>
+        <div class="meter-core">
+          <span class="reading" id="readingValue">--</span>
+          <span class="reading-label" id="readingLabel">Tap start</span>
+        </div>
+      </div>
+
+      <div class="meter-controls">
+        <button id="toggleBtn" class="btn btn-primary">Start measuring</button>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="silenceZoneCheck" />
+          <span>This spot is near a hospital or school (silence zone)</span>
+        </label>
+
+        <label class="select-row">
+          <span>Source</span>
+          <select id="categorySelect">
+            <option value="traffic">Traffic</option>
+            <option value="construction">Construction</option>
+            <option value="general" selected>General / ambient</option>
+            <option value="library">Library / study spot</option>
+          </select>
+        </label>
+
+        <button id="logBtn" class="btn btn-secondary" disabled>Log this reading</button>
+        <p class="status" id="statusMsg" role="status"></p>
+      </div>
+    </section>
+
+    <section class="map-section" aria-label="Community noise map">
+      <div class="section-heading">
+        <h2>Live community map</h2>
+        <div class="legend">
+          <span class="legend-dot dot-quiet"></span> Quiet
+          <span class="legend-dot dot-moderate"></span> Moderate
+          <span class="legend-dot dot-loud"></span> Loud
+          <span class="legend-dot dot-violation"></span> Silence-zone violation
+        </div>
+      </div>
+      <div id="map"></div>
+    </section>
+
+    <section class="insight-section" aria-label="AI insight">
+      <div class="section-heading">
+        <h2>What's happening right now</h2>
+        <button id="insightBtn" class="btn btn-secondary">Get insight</button>
+      </div>
+      <p class="insight-text" id="insightText">Log a few readings, then ask for an insight — it'll summarize patterns in plain language.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Loudness readings come from phone/laptop microphones and are <strong>relative, not calibrated decibel readings</strong> — treat them as hotspots, not lab-grade measurements. Silence-zone limits (50&nbsp;dB day / 40&nbsp;dB night, CPCB Noise Pollution Rules, 2000) shown here are the legal reference, not what your device is precisely measuring.</p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
